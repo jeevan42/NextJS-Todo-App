@@ -129,7 +129,17 @@ export default function Home() {
                 </span>)
               }
               {editId === id ? (
-                <button onClick={() => saveEdit(id)} className="text-green-600 font-semibold mr-2">Save</button>
+                <>
+                  <button onClick={() => saveEdit(id)} className="text-green-600 font-semibold mr-2">Save</button>
+                  <button
+                    onClick={() => {
+                      setEditId(null);
+                      setEditTitle('');
+                    }}
+                    className="text-gray-500 font-semibold"
+                  >
+                    Cancel
+                  </button> </>
               ) : (
                 <button onClick={() => handleEdit(id, title)} className="text-blue-600 font-semibold mr-2">Edit</button>
               )}
