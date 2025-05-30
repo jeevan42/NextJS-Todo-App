@@ -30,7 +30,7 @@ A simple yet powerful Todo App built with **Next.js App Router**, **TypeScript**
 
 ```bash
 # 1. Clone the repo
-git clone https://github.com/your-username/todo-app.git
+git clone https://github.com/jeevan42/NextJS-Todo-App.git
 
 # 2. Go to the project directory
 cd todo-app
@@ -40,6 +40,10 @@ npm install
 
 # 4. Run the development server
 npm run dev
+
+```
+
+---
 
 ## 📁 Project Structure
 <pre>
@@ -58,3 +62,5 @@ npm run dev
 ├── package.json                   # Scripts and dependencies
 └── README.md
 </pre>
+
+---
