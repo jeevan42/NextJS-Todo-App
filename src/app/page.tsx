@@ -12,6 +12,8 @@ export default function Home() {
   const [todos, setTodos] = useState<Todo[]>([]);
   const [newTodo, setNewTodo] = useState('');
   const [loading, setLoading] = useState(false);
+  const [editId, setEditId] = useState<number | null>(null);
+  const [editTitle, setEditTitle] = useState('');
 
   // Fetch todos on mount
   useEffect(() => {
@@ -26,7 +28,7 @@ export default function Home() {
     const res = await fetch('/api/todos', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ title: newTodo.trim() }),
+      body: JSON.stringify({ action: 'add', title: newTodo.trim() }),
     })
     if (res.ok) {
       const todo = await res.json();
@@ -34,6 +36,24 @@ export default function Home() {
       setNewTodo('');
     }
     setLoading(false);
+  };
+
+  const saveEdit = async (id: number) => {
+    if (!editTitle.trim()) return;
+    const res = await fetch('/api/todos', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ action: 'edit', id, title: editTitle }),
+    })
+    if (res.ok) {
+      setTodos(prev =>
+        prev.map(todo =>
+          todo.id === id ? { ...todo, title: editTitle } : todo
+        )
+      )
+    }
+    setEditId(null);
+    setEditTitle('');
   };
 
   const toggleComplete = async (id: number, completed: boolean) => {
@@ -57,6 +77,11 @@ export default function Home() {
       body: JSON.stringify({ id }),
     });
     setTodos(todos.filter(todo => todo.id !== id))
+  };
+
+  const handleEdit = (id: number, title: string) => {
+    setEditId(id);
+    setEditTitle(title);
   };
 
   return (
@@ -92,9 +117,22 @@ export default function Home() {
                 onChange={() => toggleComplete(id, !completed)}
                 className="mr-2"
               />
-              <span className={completed ? 'line-through text-gray-500' : ''}>
-                {title}
-              </span>
+              {editId === id ? (
+                <input
+                  value={editTitle}
+                  onChange={(e) => setEditTitle(e.target.value)}
+                  className="border px-2 py-1 mr-2 flex-grow"
+                />
+              )
+                : (<span className={`flex-grow ${completed ? 'line-through text-gray-500' : ''}`}>
+                  {title}
+                </span>)
+              }
+              {editId === id ? (
+                <button onClick={() => saveEdit(id)} className="text-green-600 font-semibold mr-2">Save</button>
+              ) : (
+                <button onClick={() => handleEdit(id, title)} className="text-blue-600 font-semibold mr-2">Edit</button>
+              )}
               <button
                 onClick={() => deleteTodo(id)}
                 className="ml-auto text-red-600 font-bold"
@@ -103,6 +141,6 @@ export default function Home() {
           )
         })}
       </ul>
-    </main>
+    </main >
   )
 }
